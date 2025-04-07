@@ -1,6 +1,7 @@
 import { CallbackQuery, Message, Update } from 'telegraf/typings/core/types/typegram';
-import { State } from '../services/users/state.enum';
+import { State } from '../shared/state.enum';
 import { Context, NarrowedContext } from 'telegraf';
+import { CallbackData } from '../shared/callback-data';
 
 export interface HandlerInterface {
   handleMessage(
@@ -10,6 +11,7 @@ export interface HandlerInterface {
   handleCallbackQuery(
     ctx: NarrowedContext<Context<Update>, Update.CallbackQueryUpdate<CallbackQuery>>,
     cb: CallbackQuery,
+    callbackData: CallbackData,
   ): State | Promise<State>;
   handleRestart(ctx: NarrowedContext<Context<Update>, Update.MessageUpdate<Message>>): State | Promise<State>;
 }

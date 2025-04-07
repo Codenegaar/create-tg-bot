@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
-import { State } from './state.enum';
+import { State } from '../../shared/state.enum';
 
 export class UsersService {
   constructor(private usersRepository: Repository<User>) {}

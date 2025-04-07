@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { createMockRepository, MockRepository } from '../../utils/tests.util';
 import { UsersService } from './users.service';
-import { State } from './state.enum';
+import { State } from '../../shared/state.enum';
 
 describe('Users service', () => {
   let usersService: UsersService;

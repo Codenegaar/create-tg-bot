@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { State } from '../services/users/state.enum';
+import { State } from '../shared/state.enum';
 
 @Entity()
 export class User {

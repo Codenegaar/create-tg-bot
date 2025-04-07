@@ -1,7 +1,10 @@
 import { CallbackQuery, Message, Update } from 'telegraf/typings/core/types/typegram';
-import { State } from '../services/users/state.enum';
+import { State } from '../shared/state.enum';
 import { HandlerInterface } from './handler.interface';
 import { Context, NarrowedContext, Telegraf } from 'telegraf';
+import { mainMenuDialog } from '../shared/dialogs/main-menu.dialog';
+import { CallbackData } from '../shared/callback-data';
+import { CallbackAction } from '../shared/callback-action.enum';
 
 export class LambdaHandler implements HandlerInterface {
   private constructor() {}
@@ -15,22 +18,17 @@ export class LambdaHandler implements HandlerInterface {
 
   public handleMessage(
       ctx: NarrowedContext<Context<Update>, Update.MessageUpdate<Message>>,
-      message: Message,
-  ): State {
-    ctx.sendMessage('Welcome to the main menu');
+  ): State | Promise<State> {
+    const dialog = mainMenuDialog();
+    ctx.sendMessage(dialog.text, dialog.extra);
     return State.MAIN_MENU;
   }
 
-  public handleCallbackQuery(
-    ctx: NarrowedContext<Context<Update>, Update.CallbackQueryUpdate<CallbackQuery>>,
-    cb: CallbackQuery,
-  ): State {
-    console.log('Handling callback query');
+  public handleCallbackQuery(): State | Promise<State> {
     return State.LAMBDA;
   }
 
-  public handleRestart(): State {
-    console.log('Handling restart');
+  public handleRestart(): State | Promise<State> {
     return State.LAMBDA;
   }
 

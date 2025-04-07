@@ -1,10 +1,13 @@
 import { Telegraf } from 'telegraf';
+import { callbackQuery } from 'telegraf/filters';
 import { User as TgUser } from 'telegraf/typings/core/types/typegram';
 import { Logger } from 'pino';
 import { ServiceContainer } from '../services/service-container';
 import { HandlerInterface } from '../handlers/handler.interface';
-import { State } from '../services/users/state.enum';
+import { State } from '../shared/state.enum';
 import { LambdaHandler } from '../handlers/lambda.handler';
+import { CallbackData } from '../shared/callback-data';
+import { MainMenuHandler } from '../handlers/main-menu.handler';
 
 async function getStateHandler(fromUser: TgUser): Promise<HandlerInterface> {
   const serviceContainer = ServiceContainer.getInstance();
@@ -15,6 +18,10 @@ async function getStateHandler(fromUser: TgUser): Promise<HandlerInterface> {
     switch(state) {
       case State.LAMBDA:
         handler = LambdaHandler.getInstance();
+        break;
+      case State.MAIN_MENU:
+        handler = MainMenuHandler.getInstance();
+        break;
     }
 
     if (!handler) {
@@ -42,10 +49,11 @@ export function initHandlers(bot: Telegraf, logger: Logger) {
     }
   });
 
-  bot.on('callback_query', async(ctx) => {
+  bot.on(callbackQuery('data'), async(ctx) => {
     try {
       const handler = await getStateHandler(ctx.update.callback_query.from);
-      const newState = await handler.handleCallbackQuery(ctx, ctx.update.callback_query);
+      const callbackData = CallbackData.fromData(ctx.update.callback_query.data);
+      const newState = await handler.handleCallbackQuery(ctx, ctx.update.callback_query, callbackData);
       await saveUserState(ctx.update.callback_query.from, newState);
     } catch(error) {
       logger.error(error);
