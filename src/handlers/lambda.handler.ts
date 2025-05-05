@@ -19,7 +19,7 @@ export class LambdaHandler implements HandlerInterface {
   public handleMessage(
       ctx: NarrowedContext<Context<Update>, Update.MessageUpdate<Message>>,
   ): State | Promise<State> {
-    const dialog = mainMenuDialog();
+    const dialog = mainMenuDialog(ctx.update.message.from.language_code);
     ctx.sendMessage(dialog.text, dialog.extra);
     return State.MAIN_MENU;
   }
