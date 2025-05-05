@@ -27,13 +27,5 @@ export class MainMenuHandler implements HandlerInterface {
     return State.MAIN_MENU;
   }
 
-  public handleMessage(): State | Promise<State> {
-    return State.MAIN_MENU;
-  }
-
-  public handleRestart(): State | Promise<State> {
-    return State.MAIN_MENU;
-  }
-
   private static _instance: MainMenuHandler;
 }

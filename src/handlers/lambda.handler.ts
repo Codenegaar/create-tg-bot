@@ -24,13 +24,5 @@ export class LambdaHandler implements HandlerInterface {
     return State.MAIN_MENU;
   }
 
-  public handleCallbackQuery(): State | Promise<State> {
-    return State.LAMBDA;
-  }
-
-  public handleRestart(): State | Promise<State> {
-    return State.LAMBDA;
-  }
-
   private static _instance: LambdaHandler;
 }

@@ -39,11 +39,21 @@ async function saveUserState(fromUser: TgUser, state: State) {
 }
 
 export function initHandlers(bot: Telegraf, logger: Logger) {
+  bot.start(async(ctx) => {
+    const handler = await getStateHandler(ctx.update.message.from);
+    const newState = handler.handleStart ?
+      await handler.handleStart(ctx) : 
+      await LambdaHandler.getInstance().handleMessage(ctx);
+    await saveUserState(ctx.update.message.from, newState);
+  });
+
   bot.on('message', async(ctx) => {
     try {
       const handler = await getStateHandler(ctx.update.message.from);
-      const newState = await handler.handleMessage(ctx, ctx.update.message);
-      await saveUserState(ctx.update.message.from, newState);
+      if (handler.handleMessage) {
+        const newState = await handler.handleMessage(ctx, ctx.update.message);
+        await saveUserState(ctx.update.message.from, newState);
+      }
     } catch(error) {
       logger.error(error);
     }
@@ -53,8 +63,10 @@ export function initHandlers(bot: Telegraf, logger: Logger) {
     try {
       const handler = await getStateHandler(ctx.update.callback_query.from);
       const callbackData = CallbackData.fromData(ctx.update.callback_query.data);
-      const newState = await handler.handleCallbackQuery(ctx, ctx.update.callback_query, callbackData);
-      await saveUserState(ctx.update.callback_query.from, newState);
+      if (handler.handleCallbackQuery) {
+        const newState = await handler.handleCallbackQuery(ctx, ctx.update.callback_query, callbackData);
+        await saveUserState(ctx.update.callback_query.from, newState);
+      }
     } catch(error) {
       logger.error(error);
     }

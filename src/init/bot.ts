@@ -1,21 +1,13 @@
 import { randomBytes } from 'node:crypto';
 import { Logger } from 'pino';
 import { Telegraf } from 'telegraf';
-import { HttpProxyAgent } from 'http-proxy-agent';
 import { Config } from '../config/config';
 import { initHandlers } from './handlers';
 
 export function initBot(logger: Logger) {
   const config = Config.getInstance();
 
-  //Check if proxy is needed
-  const proxyAgent = config.httpProxy ?
-    new HttpProxyAgent(config.httpProxy) :
-    null;
-
-  const bot = new Telegraf(config.token!, {
-    ...( proxyAgent ? { telegram: { agent: proxyAgent } } : {}),
-  });
+  const bot = new Telegraf(config.token!);
 
   //Init handlers
   initHandlers(bot, logger);
