@@ -1,0 +1,46 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sample_bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 8082:8082
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+      npm run typeorm migration:run -- -d dist/config/data-source.js &&
+      node dist/index.js
+      "
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: sample_bot_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

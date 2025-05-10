@@ -15,6 +15,8 @@ export class Config {
     this._token = process.env.BOT_TOKEN;
     this._webhookPort = process.env.BOT_WEBHOOK_PORT ? parseInt(process.env.BOT_WEBHOOK_PORT) : undefined;
     this._webhookDomain = process.env.BOT_WEBHOOK_DOMAIN;
+    this._webhookPath = process.env.BOT_WEBHOOK_PATH;
+    this._webhookSecret = process.env.BOT_WEBHOOK_SECRET;
   }
 
   public get token(): string | undefined {
@@ -29,8 +31,18 @@ export class Config {
     return this._webhookDomain;
   }
 
+  public get webhookPath(): string | undefined {
+    return this._webhookPath;
+  }
+
+  public get webhookSecret(): string | undefined {
+    return this._webhookSecret;
+  }
+
   private static _instance: Config;
   private _token?: string;
   private _webhookPort?: number;
   private _webhookDomain?: string;
+  private _webhookPath?: string;
+  private _webhookSecret?: string;
 }
